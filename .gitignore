@@ -1,0 +1,10 @@
+# Ignorowanie plików i folderów wirtualnego środowiska Python
+Project/venv/
+
+# Ignorowanie pliku inspector.py
+Project/venv/lib/python3.9/site-packages/inspector.py
+
+# Ignorowanie folderu inspector-0.5.1.1.dist-info
+Project/venv/lib/python3.9/site-packages/inspector-0.5.1.1.dist-info/
+
+Project/kivy/

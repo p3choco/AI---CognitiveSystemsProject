@@ -1,44 +1,47 @@
 from kivy.app import App
-from kivy.core.image import Texture
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-import cv2
 from kivy.uix.image import Image
-from kivy.uix.textinput import TextInput
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
+import cv2
+from kivy.modules import inspector
+from kivy.uix.floatlayout import FloatLayout
+from kivy.core.window import Window
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_eye.xml')
 smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_smile.xml')
 
-
 class Launch(GridLayout):
     def __init__(self, **kwargs):
         super(Launch, self).__init__(**kwargs)
         self.cols = 1
+        self.capture = cv2.VideoCapture(0)
 
-        self.inside = GridLayout()
-        self.inside.cols = 2
+        self.go(self)
 
-        self.inside.add_widget(Label(text="First Name: "))
-        self.name = TextInput(multiline=False)
-        self.inside.add_widget(self.name)
 
-        self.inside.add_widget(Label(text="Last Name: "))
-        self.lastName = TextInput(multiline=False)
-        self.inside.add_widget(self.lastName)
+    def go(self, thing):
+        self.image = Image()
+        Clock.schedule_interval(self.update, 1.0 / 30.0)
+        self.add_widget(self.image)
 
-        self.inside.add_widget(Label(text="Email: "))
-        self.email = TextInput(multiline=False)
-        self.inside.add_widget(self.email)
+    def update(self, dt):
+        # Pobieranie ramki wideo z kamery OpenCV
 
-        self.add_widget(self.inside)
+        ret, frame = self.capture.read()
 
-        self.submit = Button(text="Submit", font_size=40)
-        self.submit.bind(on_press=self.videoTime)
-        self.add_widget(self.submit)
+        if ret:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            frame = self.detect(gray, frame)
+            frame = cv2.flip(frame, 0)
 
+            # Konwersja ramki na teksturę Kivy
+            texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+            texture.blit_buffer(frame.tobytes(), colorfmt='bgr', bufferfmt='ubyte')
+
+            # Ustawienie tekstury wideo w Kivy
+            self.image.texture = texture
 
     def detect(self, gray, frame):
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -47,35 +50,20 @@ class Launch(GridLayout):
             roi_gray = gray[y:y + h, x:x + w]
             roi_color = frame[y:y + h, x:x + w]
             smiles = smile_cascade.detectMultiScale(roi_gray, 1.8, 50)
+            if len(smiles):
+                self.sign.text = "SMILE"
+            else:
+                self.sign.text = "NOT"
+
             for (sx, sy, sw, sh) in smiles:
                 cv2.rectangle(roi_color, (sx, sy), ((sx + sw), (sy + sh)), (0, 255, 0), 2)
         return frame
 
-    def videoTime(self, instance):
-        video_capture = cv2.VideoCapture(0)
-        while video_capture.isOpened():
-            ret, frame = video_capture.read()
-            # if not ret:
-            #     break
-
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-            canvas = self.detect(gray, frame)
-            cv2.imshow('Video', canvas)
-
-            # The control breaks once q key is pressed
-            if cv2.waitKey(1) & 0xff == ord('q'):
-                break
-        video_capture.release()
-
-
-class MyApp(App):
+class MainApp(App):
     def build(self):
-        return Launch()
+        launch = Launch()
+        inspector.create_inspector(Window, launch)
+        return launch
 
-
-
-if __name__ == '__main__':
-    app = MyApp()
-    app.run()
+MainApp().run()
 
