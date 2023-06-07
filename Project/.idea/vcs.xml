@@ -3,6 +3,5 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/kivy" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/kivy-designer" vcs="Git" />
   </component>
 </project>
