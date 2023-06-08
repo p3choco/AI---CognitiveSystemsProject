@@ -1,4 +1,5 @@
 import os
+from collections import deque
 from datetime import date
 
 from kivy.app import App
@@ -9,6 +10,7 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from kivy.core.window import Window
 import cv2
+import matplotlib.pyplot as plt
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_smile.xml')
@@ -31,10 +33,10 @@ class Launch(GridLayout):
         run_smile_ratio = []
         self.go(self)
 
-    def go(self, thing):
+    def go(self, unused):
         Clock.schedule_interval(self.update, 1.0 / 30.0)
 
-    def update(self, dt):
+    def update(self, unused):
         ret, frame = self.capture.read()
 
         if ret:
@@ -65,24 +67,31 @@ class Launch(GridLayout):
                 smileFrames +=1;
             else:
                 self.sign.text = "NOT"
+
             pokerFrames += 1;
-            print(pokerFrames)
-            if pokerFrames == 1000:
+
+            if pokerFrames >= 1000:
                 run_smile_ratio.append(smileFrames/pokerFrames)
                 print("CHECK", run_smile_ratio)
+                self.save(self)
                 pokerFrames = 0
                 smileFrames = 0
 
             for (sx, sy, sw, sh) in smiles:
                 cv2.rectangle(roi_color, (sx, sy), ((sx + sw), (sy + sh)), (0, 255, 0), 2)
         return frame
-    def save(self, thing):
+    def save(self, unused):
         global run_smile_ratio
+
+        if not len(run_smile_ratio):
+            print("Nothing to save")
+            return
+
         today = date.today()
         file_name = "Days/" + today.strftime("%Y-%m-%d") + ".txt"
 
         if os.path.isfile(file_name):
-            # Jeśli plik już istnieje, zaktualizuj wartość
+
             with open(file_name, "r") as file:
                 lines = file.readlines()
                 if len(lines) >= 2:
@@ -107,6 +116,65 @@ class Launch(GridLayout):
             file.write(str(ratio) + "\n")
             file.write(str(cycle_num) + "\n")
 
+        self.save_last_hour(run_smile_ratio.pop())
+        run_smile_ratio = []
+
+        self.show_plot(self)
+
+    def show_plot(self, unused):
+        today = date.today()
+        file_name = "Days/" + today.strftime("%Y-%m-%d") + ".txt"
+        if os.path.isfile(file_name):
+
+            with open(file_name, "r") as file:
+                lines = file.readlines()
+                if len(lines) >= 2:
+                    ratio = float(lines[0])
+
+        else:
+            print("Brak Danych")
+
+        labels = ['Smile', 'Not Smile']
+        sizes = [ratio, 1 - ratio]
+        colors = ['orange', 'purple']
+
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+        plt.axis('equal')  # Ustawienie równych osi
+        plt.title('Ratio of Smile vs Not Smile')
+
+        plt.show()
+
+    def save_last_hour(self,new_value):
+        file_name = "Last_Hour" + ".txt"
+        max_values = 24  # Maksymalna liczba przechowywanych wartości
+        values = deque(maxlen=max_values)
+
+        # Odczytaj istniejące wartości z pliku
+        if os.path.isfile(file_name):
+            with open(file_name, 'r') as file:
+                lines = file.readlines()
+                for line in lines:
+                    value = float(line.strip())  # Konwersja na odpowiedni typ
+                    values.append(value)
+
+        # Dodaj nową wartość
+        values.append(new_value)
+
+        # Zapisz wartości z powrotem do pliku
+        with open(file_name, 'w') as file:
+            for value in values:
+                file.write(str(value) + '\n')
+
+        hour_ratio = sum(values)/len(values)
+        labels = ['Smile', 'Not Smile']
+        sizes = [hour_ratio, 1 - hour_ratio]
+        colors = ['orange', 'purple']
+
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+        plt.axis('equal')  # Ustawienie równych osi
+        plt.title('Last Hour Smiles')
+
+        plt.show()
 
 
 class MainApp(App):
@@ -118,7 +186,6 @@ class MainApp(App):
 
     def on_stop(self):
         launch = self.root
-        launch.save(self)
         if launch.capture.isOpened():
             launch.capture.release()
 
