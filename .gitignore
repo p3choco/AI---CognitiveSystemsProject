@@ -12,3 +12,7 @@ Project/kivy/
 Project/Days
 
 Project/Last_Hour.txt
+
+Project/venv/lib/
+
+.idea
