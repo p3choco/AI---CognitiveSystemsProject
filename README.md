@@ -11,7 +11,6 @@ A project developed for the "Cognitive Systems" course, utilizing Kivy and Pytho
   * [Main Screen](#main-screen)
   * [Statistics Screen](#statistics-screen)
   * [Recalibration Screen](#recalibration-screen)
-- [Support and Collaboration](#support-and-collaboration)
 - [License](#license)
 
 ## About the Project
