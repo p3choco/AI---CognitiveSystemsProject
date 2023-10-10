@@ -5,6 +5,25 @@
 
 A project developed for the "Cognitive Systems" course, utilizing Kivy and Python to detect smiles in real-time.
 
+## The purpouse of the project 
+
+### Why smiling is important?
+
+1. Improves mood: When we smile, endorphins - happiness hormones - are released, helping us feel better and reducing stress.
+   
+2. Supports mental health: Regularly smiling can help cope with depression and anxiety, improving overall quality of life.
+   
+3. Helps with communication: By smiling, we express positive emotions and convey to others that we are open to contact and willing to establish relationships.
+   
+4. Enhances interpersonal relationships: By smiling, we display a friendly and open attitude, which in turn facilitates establishing contacts with others and building positive relationships.
+   
+5. Improves appearance: A person who smiles appears more attractive and positive, which can help build a positive image.
+
+### How you can use this app? 
+
+There is a saying " If you want to improve something start monitoring it ". App helps in monitoring smile, therefore you can smile more during a day and have better mood. You can also improve your appearance at online meetings due to the same pronciple. 
+
+
 ## Table of Contents
 - [About the Project](#about-the-project)
 - [Installation and Configuration](#installation-and-configuration)
