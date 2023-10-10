@@ -1,4 +1,5 @@
-![Cognitive_Systems_Project](https://github.com/p3choco/CognitiveSystemsProject/assets/62072811/33a4fbef-dc7e-4a03-ab0e-791aca909972)
+![Cognitive_Smile_Detector-2](https://github.com/p3choco/CognitiveSystemsProject/assets/62072811/211d00d8-4d2c-49a6-b861-efa5fe64287d)
+
 
 # Cognitive Smile Detector
 
