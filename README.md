@@ -45,6 +45,9 @@ The "Cognitive Smile Detector" is an desktop application written in Python using
 ### Main Screen
 The main screen displays the camera feed. At the bottom of the screen, information is displayed indicating whether the user is smiling.
 
+
+<img width="1002" alt="Zrzut ekranu 2023-10-12 o 13 10 07" src="https://github.com/p3choco/CognitiveSystemsProject/assets/62072811/24d96685-fc22-452b-9bce-59fc2ce0cade">
+
 ### Statistics Screen
 This screen displays the user's smile statistics:
 - From the last hour.
@@ -54,6 +57,9 @@ This screen displays the user's smile statistics:
 Statistics are presented in both graphical and numerical forms.
 
 Data for stats is saved locally on user's device what provides seciurity and offline use possible
+
+
+<img width="999" alt="Zrzut ekranu 2023-10-12 o 13 23 29" src="https://github.com/p3choco/CognitiveSystemsProject/assets/62072811/55360739-5612-407c-80db-2d89549a116f">
 
 ### Recalibration Screen
 This screen allows you to adjust the facial recognition model for a specific user. To recalibrate:
